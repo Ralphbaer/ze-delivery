@@ -33,7 +33,7 @@ func NewPartnerMongoRepository(c *common.MongoConnection) *PartnerMongoRepositor
 	}
 }
 
-// FindByID returns a specific Partner given an id
+// Find returns a specific Partner given an id
 func (r PartnerMongoRepository) Find(ctx context.Context, eventID string) (*e.Partner, error) {
 	coll, err := r.connection.ReadyCollection(r.opts.DatabaseName, r.opts.CollectionName)
 	if err != nil {

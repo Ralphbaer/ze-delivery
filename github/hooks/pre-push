@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# v1
+make test
+

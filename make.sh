@@ -87,7 +87,7 @@ checkEnvs() {
         lineError "Secret exposed in file file:////$FILE"
         err="1"
       fi
-      if [[ $data =~ MONGO_CONNECTION_STRING= && ! $data =~ @localhost ]]; then
+      if [[ $data =~ MONGO_CONNECTION_STRING= && ! $data =~ localhost ]]; then
         lineError "Data base connection string exposed in file file://$FILE"
         err="1"
       fi

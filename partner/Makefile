@@ -50,8 +50,8 @@ container:
 
 deploy-image:
 	aws ecr get-login --no-include-email --region us-east-2 | bash	
-	docker tag ze-delivery/$(service-name):v1 137461123460.dkr.ecr.us-east-2.amazonaws.com/ze-delivery/$(service-name):latest
-	docker push 137461123460.dkr.ecr.us-east-2.amazonaws.com/ze-delivery/$(service-name):latest
+	docker tag ze-delivery/$(service-name):v1 742261599957.dkr.ecr.us-east-2.amazonaws.com/ze-delivery/$(service-name):latest
+	docker push 742261599957.dkr.ecr.us-east-2.amazonaws.com/ze-delivery/$(service-name):latest
 
 localenv:
 	rm -rf .localenv/.data && \
