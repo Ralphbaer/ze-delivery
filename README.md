@@ -1,5 +1,5 @@
 # Partner Service
-[![CircleCI](https://circleci.com/gh/Ralphbaer/ze-delivery/tree/master.svg?style=svg&circle-token=0d6b9c7b5df0b9ef027d42b792782bf19393cf19)](https://circleci.com/gh/Ralphbaer/ze-delivery/tree/master)
+[![CircleCI](https://circleci.com/gh/Ralphbaer/ze-delivery/tree/master.svg?style=svg)](https://circleci.com/gh/Ralphbaer/ze-delivery/tree/master)
 
 This repo contains the source code of the Partner service.
 
