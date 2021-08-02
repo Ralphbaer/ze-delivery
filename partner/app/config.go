@@ -8,10 +8,6 @@ type Config struct {
 	MongoConnectionString string `env:"MONGO_CONNECTION_STRING"`
 	ServerAddress         string `env:"SERVER_ADDRESS"`
 	SpecURL               string `env:"SPEC_URL"`
-	AdminClientID         string `env:"ADMIN_OAUTH2_CLIENT_ID"`
-	AdminClientSecret     string `env:"ADMIN_OAUTH2_CLIENT_SECRET"`
-	AdminTokenURL         string `env:"ADMIN_OAUTH2_TOKEN_URL"`
-	AdminScopes           string `env:"ADMIN_OAUTH2_SCOPES"`
 }
 
 // NewConfig creates a instance of Config
