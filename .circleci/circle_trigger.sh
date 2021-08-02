@@ -17,7 +17,7 @@ if [ -f "$LOCAL_ENV" ]; then
   echo "PROJECT_NAME: $CIRCLE_PROJECT_REPONAME"
 fi
 
-TRIGGERS=`./.circleci/pkg-config.yml`
+TRIGGERS=`.circleci/pkg-config.yml`
 
 ############################################
 ## 1. Commit SHA of last CI build
