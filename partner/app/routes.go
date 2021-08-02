@@ -39,7 +39,6 @@ func NewRouter(p *handler.PartnerHandler) *mux.Router {
 
 	lib.AllowFullOptionsWithCORS(r)
 	r.Use(lib.WithCorrelationID)
-	// ADMIN partners
 
 	r.Handle("/partner/partners/nearest", p.GetNearestPartner()).Methods("GET")
 
