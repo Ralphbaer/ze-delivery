@@ -49,8 +49,8 @@ container:
 	docker run --env SERVER_ADDRESS=:3000 -it -p 127.0.0.1:3000:3000 ze-delivery/$(service-name):v1 bash
 
 deploy-image:
-	aws ecr get-login --no-include-email --region us-east-2 | bash	
-	docker tag ze-delivery/$(service-name):v1 742261599957.dkr.ecr.us-east-2.amazonaws.com/ze-delivery/$(service-name):latest
+	aws ecr get-login-password --region us-east-2 | docker login --username cleverson-soares --password-stdin 742261599957.dkr.ecr.us-east-2.amazonaws.com/ze-delivery/$(service-name) | bash	
+	docker tag ze-delivery/$(service-name):v1 742261599957.dkr.ecr.us-east-2.amazonaws.com/ze-delivery/$(service-name)
 	docker push 742261599957.dkr.ecr.us-east-2.amazonaws.com/ze-delivery/$(service-name):latest
 
 localenv:

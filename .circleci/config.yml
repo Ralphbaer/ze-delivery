@@ -34,7 +34,6 @@ jobs:
   trigger-workflows:
     executor: golang
     steps:
-      - checkout
       - run:
           name: Trigger workflows
           command: chmod +x .circleci/circle_trigger.sh && .circleci/circle_trigger.sh
