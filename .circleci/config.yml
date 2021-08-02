@@ -39,14 +39,14 @@ jobs:
           keys:
             - go-mod-v1-{{ checksum "go.sum" }}
 
-      - run:
-          name: Building pkg-build
-          command: make
-          working_directory: ./pkg-build
+      #- run:
+      #    name: Building pkg-build
+      #    command: make
+      #    working_directory: ./pkg-build
 
-      - run:
-          name: Copying pkg-build
-          command: mv ./pkg-build/pkg-build ./.circleci/
+      #- run:
+      #    name: Copying pkg-build
+      #    command: mv ./pkg-build/pkg-build ./.circleci/
 
       - run:
           name: Trigger workflows
