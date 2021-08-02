@@ -23,8 +23,8 @@ executors:
     docker:
       - image: ze-delivery/golang:0.0.1
         auth:
-          username: cleversonsoares # can specify string literal values
-          password: senha@ze-delivery # or project environment variable reference
+          username: cleversonsoares
+          password: $DOCKERHUB_PASSWORD
 
 jobs:
   # trigger-workflows is the first workflow to be executed after a commit.
