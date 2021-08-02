@@ -21,7 +21,7 @@ parameters:
 executors:
   golang:
     docker:
-      - image: ze-delivery/golang:0.0.1
+      - image: cleversonsoares/ze-delivery:0.0.1
         auth:
           username: cleversonsoares
           password: $DOCKERHUB_PASSWORD
