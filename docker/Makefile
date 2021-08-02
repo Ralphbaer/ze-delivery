@@ -1,3 +1,3 @@
 
 build:
-	docker build -t ze-delivery/golang:latest .
+	docker build -t cleversonsoares/ze-delivery:latest .
