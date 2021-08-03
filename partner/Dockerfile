@@ -2,6 +2,8 @@ FROM golang:1.8
 
 WORKDIR /app
 
+RUN go build -o /ze-delivery/partner/.bin/partner-service
+
 ADD ./partner/.bin/partner-service .
 ADD ./partner/gen/swagger.yaml ./partner/gen/
 
