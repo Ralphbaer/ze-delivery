@@ -3,12 +3,22 @@ version: 2.1
 orbs:
   aws-ecr: circleci/aws-ecr@6.2.0
   aws-ecs: circleci/aws-ecs@0.0.11
-  aws-cli: circleci/aws-cli@2.0.3
+
+jobs:
+  build:
+    docker:
+      - image: circleci/python:3.6.1
+    steps:
+      - run:
+          name: Test
+          command: |
+            pip install "PyYAML<4,>=3.10" awsebcli
 
 workflows:
   # Log into AWS, build and push image to Amazon ECR
   build_and_push_image:
     jobs:
+      - build
       - aws-ecr/build-and-push-image:
           account-url: AWS_ECR_ACCOUNT_URL
           aws-access-key-id: AWS_ACCESS_KEY_ID
