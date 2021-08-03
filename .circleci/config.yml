@@ -50,7 +50,7 @@ jobs:
 
       - run:
           name: Trigger workflows
-          command: chmod +x .circleci/circle_trigger.sh && .circleci/circle_trigger.sh
+          command: chmod u+x .circleci/circle_trigger.sh && .circleci/circle_trigger.sh
 
       - save_cache:
           paths:
