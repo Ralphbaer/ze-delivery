@@ -25,7 +25,7 @@ workflows:
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
           create-repo: true
           # Name of dockerfile to use. Defaults to Dockerfile.
-          dockerfile: Dockerfile
+          dockerfile: partner/Dockerfile
           # AWS_REGION_ENV_VAR_NAME
           region: AWS_DEFAULT_REGION
           # ECR
