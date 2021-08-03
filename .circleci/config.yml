@@ -35,10 +35,6 @@ jobs:
     executor: golang
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - go-mod-v1-{{ checksum "go.sum" }}
-
       - run:
           name: Building pkg-build
           command: make
@@ -51,11 +47,6 @@ jobs:
       - run:
           name: Trigger workflows
           command: chmod +x .circleci/circle_trigger.sh && .circleci/circle_trigger.sh
-
-      - save_cache:
-          paths:
-            - "/go/pkg/mod"
-          key: go-mod-v1-{{ checksum "go.sum" }}
 
   # Updates Amazon AWS ECS Task Definition
 
@@ -196,6 +187,7 @@ workflows:
             branches:
               only:
                 - master
+                - ft/signal.id
 
       - update-aws-ecs-task:
           package_binary: partner-service
