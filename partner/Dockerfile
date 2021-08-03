@@ -8,9 +8,8 @@ RUN go mod download
 
 COPY ./partner/*.go ./
 
-COPY Dockerfile ./partner/gen/swagger.yaml* ./partner/gen/
+COPY ./partner/gen/swagger.yaml* ./partner/gen/
 
-RUN rm ./partner/./gen/Dockerfile
 RUN go build -o /ze-delivery
 
 EXPOSE 8080
