@@ -4,7 +4,29 @@ orbs:
   aws-ecr: circleci/aws-ecr@6.15.3
   aws-ecs: circleci/aws-ecs@0.0.11
 
+# build_package is the main build process. It builds and test our packages using given parameters.
+# It also generates artifacts, coverage files, test results and etc.
+
+jobs:
+  build_package:
+    docker:
+      - image: "circleci/golang:1.11"
+    steps:
+      - checkout
+
+    parameters:
+      package_name:
+        type: string
+      package_binary:
+        type: string
+      package_type:
+        type: string
+        default: service
+    package_directory:
+      type: string
+
 workflows:
+  # Log into AWS, build and push image to Amazon ECR
   build_and_push_image:
     jobs:
       - build_package:
