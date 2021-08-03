@@ -2,6 +2,8 @@ FROM golang:1.8
 
 WORKDIR /app
 
+RUN bash -c 'echo -e ls -al'
+
 ADD ./.bin/partner-service .
 ADD ./gen/swagger.yaml ./gen/
 
