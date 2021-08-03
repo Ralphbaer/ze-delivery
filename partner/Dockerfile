@@ -1,27 +1,15 @@
-FROM golang:1.8 as builder
+FROM golang:1.16-alpine
 
-# Application working directory ( Created if it doesn't exist )
-WORKDIR /build
-# Copy all files ignoring those specified in dockerignore
-COPY . /build/
-
-# Execute instructions on a new layer on top of current image. Run in shell.
-RUN CGO_ENABLED=0 go build -a -installsuffix cgo --ldflags "-s -w" -o /build/main
-
-FROM alpine:3.9.4
-
-# metadata for better organization
-LABEL app="partner-service"
-LABEL environment="production"
-# Set workdir on current image
 WORKDIR /app
-# Leverage a separate non-root user for the application
-RUN adduser -S -D -H -h /app appuser
-# Change to a non-root user
-USER appuser
-# Add artifact from builder stage
-COPY --from=builder /build/partner-service /app/
-# Expose port to host
+
+COPY go.mod ./
+COPY go.sum ./
+RUN go mod download
+
+COPY *.go ./
+
+RUN go build -o /partner
+
 EXPOSE 8080
-# Run software with any arguments
-ENTRYPOINT ["./partner-service"]
+
+CMD [ "/partner" ]
