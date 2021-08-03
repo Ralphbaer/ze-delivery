@@ -8,7 +8,7 @@ COPY go.mod ./
 COPY go.sum ./
 
 # Execute instructions on a new layer on top of current image. Run in shell.
-RUN CGO_ENABLED=0 go build -a -installsuffix cgo --ldflags "-s -w" -o /build/partner/main
+RUN CGO_ENABLED=0 go build -a -installsuffix cgo --ldflags "-s -w" -o /build
 
 FROM alpine:3.9.4
 
