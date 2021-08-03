@@ -24,6 +24,9 @@ jobs:
       - image: "circleci/golang:1.11"
     steps:
       - checkout
+      - run: # print the name of the branch we're on
+          name: "What directory am I on?"
+          command: ls -al
 
 workflows:
   # Log into AWS, build and push image to Amazon ECR
