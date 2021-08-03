@@ -1,13 +1,95 @@
 version: 2.1
 
 orbs:
+  aws-cli: circleci/aws-cli@2.0.0
   aws-ecr: circleci/aws-ecr@6.15.3
-  aws-ecs: circleci/aws-ecs@0.0.11
+  aws-ecs: circleci/aws-ecs@2.1.0
 
-# build_package is the main build process. It builds and test our packages using given parameters.
-# It also generates artifacts, coverage files, test results and etc.
+# Parameters, received from API calls. Defines which workflow's triggered by using "when" keyword.
+
+parameters:
+  trigger:
+    type: boolean
+    default: true
+
+  partner:
+    type: boolean
+    default: false
+
+# Executors used to build our services.
+
+executors:
+  golang:
+    docker:
+      - image: ze-delivery/golang:0.0.1
 
 jobs:
+  # trigger-workflows is the first workflow to be executed after a commit.
+  # First it builds the package pkg-build which contains utilities for help us to build our services.
+  # Next, it execute circle_trigger.sh, a script that checks which packages changed since last successful commit.
+
+  trigger-workflows:
+    executor: golang
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - go-mod-v1-{{ checksum "go.sum" }}
+
+      #- run:
+      #    name: Building pkg-build
+      #    command: make
+      #    working_directory: ./pkg-build
+
+      #- run:
+      #    name: Copying pkg-build
+      #    command: mv ./pkg-build/pkg-build ./.circleci/
+
+      - run:
+          name: Trigger workflows
+          command: chmod +x .circleci/circle_trigger.sh && .circleci/circle_trigger.sh
+
+      - save_cache:
+          paths:
+            - "/go/pkg/mod"
+          key: go-mod-v1-{{ checksum "go.sum" }}
+
+  # Updates Amazon AWS ECS Task Definition
+
+  update-aws-ecs-task:
+    parameters:
+      package_directory:
+        type: string
+      task_definition_file:
+        type: string
+      package_binary:
+        type: string
+      cluster_name:
+        type: string
+      family:
+        type: string
+
+    docker:
+      - image: "circleci/golang:1.11"
+    steps:
+      - checkout
+
+      - aws-cli/install
+      - aws-cli/setup:
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-region: AWS_DEFAULT_REGION
+      - aws-ecs/update-task-definition-from-json:
+          task-definition-json: << parameters.package_directory >>/.aws/<< parameters.task_definition_file >>
+      - aws-ecs/update-service:
+          family: << parameters.family >>
+          cluster-name: << parameters.cluster_name >>
+          container-image-name-updates: "container=<< parameters.package_binary >>,tag=${CIRCLE_SHA1}"
+          container-env-var-updates: "container=<< parameters.package_binary >>,name=BUILD_NUMBER,value=${CIRCLE_BUILD_NUM}"
+          force-new-deployment: true
+
+  # build_package is the main build process. It builds and test our packages using given parameters.
+  # It also generates artifacts, coverage files, test results and etc.
+
   build_package:
     parameters:
       package_name:
@@ -20,14 +102,75 @@ jobs:
       package_directory:
         type: string
 
-    docker:
-      - image: "circleci/golang:1.11"
+    executor: golang
+
     steps:
       - checkout
 
+      - run:
+          name: Executing pre-build script
+          command: if [ -f .build/pre-build.sh ]; then
+            echo "Pre-build started...";
+            chmod +x .build/pre-build.sh;
+            .build/pre-build.sh;
+            echo "Pre-build completed!";
+            fi
+          working_directory: << parameters.package_directory >>
+
+      - run:
+          name: Building
+          command: make build
+          working_directory: << parameters.package_directory >>
+
+      - run:
+          name: Running tests
+          command: |
+            make test
+          working_directory: << parameters.package_directory >>
+
+      - run:
+          name: Preparing artifacts
+          command: |
+            make cover-html
+            mkdir -p /tmp/artifacts
+            mkdir -p /tmp/test-results
+            cp ./.artifacts/* /tmp/artifacts            
+            cp ./.artifacts/junit-report.xml /tmp/test-results
+          working_directory: << parameters.package_directory >>
+          when: always
+
+      - store_test_results:
+          path: /tmp/test-results
+
+      - store_artifacts:
+          path: /tmp/artifacts
+
+      - persist_to_workspace:
+          root: .
+          paths:
+            - << parameters.package_directory >>/.bin/<< parameters.package_binary >>
+
+# At workflows we define how packages will build and deploy.
+# We have a workflow for each package.
+
 workflows:
-  # Log into AWS, build and push image to Amazon ECR
-  build_and_push_image:
+  ###################################################################
+  # ⚡ First workflow to be executed.
+  # It checks which packages changed since last successful commit.
+  # E.g
+  ##################################################################
+
+  trigger⚡:
+    when: << pipeline.parameters.trigger >>
+    jobs:
+      - trigger-workflows
+
+  ##########################################
+  ##### 💬 Partner Workflow#####
+  ##########################################
+
+  partner:
+    when: << pipeline.parameters.partner >>
     jobs:
       - build_package:
           package_name: partner
@@ -36,22 +179,26 @@ workflows:
       - aws-ecr/build-and-push-image:
           requires:
             - build_package
+          attach-workspace: true
           account-url: AWS_ECR_ACCOUNT_URL
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
           create-repo: true
-          # Name of dockerfile to use. Defaults to Dockerfile.
-          dockerfile: partner/Dockerfile
-          # AWS_REGION_ENV_VAR_NAME
+          path: ./partner
+          dockerfile: Dockerfile
           region: AWS_DEFAULT_REGION
-          # ECR
-          repo: "ze-delivery/partner-service"
-          # myECRRepoTag
+          repo: ze-delivery/partner-service
           tag: "$CIRCLE_SHA1"
-      - aws-ecs/deploy-service-update:
+          filters:
+            branches:
+              only:
+                - master
+
+      - update-aws-ecs-task:
+          package_binary: partner-service
+          family: partner-service
+          package_directory: ./partner
+          task_definition_file: task-definition.json
+          cluster_name: "ze-delivery-microservices-main"
           requires:
             - aws-ecr/build-and-push-image
-          aws-region: AWS_DEFAULT_REGION
-          family: "partner-service"
-          cluster-name: "ze-delivery-microservices-main"
-          container-image-name-updates: "container=partner-service,tag=${CIRCLE_SHA1}"
