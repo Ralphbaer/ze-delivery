@@ -3,10 +3,10 @@ FROM golang:latest as builder
 # Application working directory ( Created if it doesn't exist )
 WORKDIR /build
 # Copy all files ignoring those specified in dockerignore
-COPY . /build/
+COPY . /build/partner/
 
 # Execute instructions on a new layer on top of current image. Run in shell.
-RUN CGO_ENABLED=0 go build -a -installsuffix cgo --ldflags "-s -w" -o /build/partner/
+RUN CGO_ENABLED=0 go build -a -installsuffix cgo --ldflags "-s -w" -o /build/
 
 FROM alpine:3.9.4
 
