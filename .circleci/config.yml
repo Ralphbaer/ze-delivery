@@ -39,18 +39,18 @@ jobs:
           keys:
             - go-mod-v1-{{ checksum "go.sum" }}
 
-      #- run:
-      #    name: Building pkg-build
-      #    command: make
-      #    working_directory: ./pkg-build
+      - run:
+          name: Building pkg-build
+          command: make
+          working_directory: ./pkg-build
 
-      #- run:
-      #    name: Copying pkg-build
-      #    command: mv ./pkg-build/pkg-build ./.circleci/
+      - run:
+          name: Copying pkg-build
+          command: mv ./pkg-build/pkg-build ./.circleci/
 
       - run:
           name: Trigger workflows
-          command: chmod u+x .circleci/circle_trigger.sh
+          command: chmod +x .circleci/circle_trigger.sh && .circleci/circle_trigger.sh
 
       - save_cache:
           paths:
