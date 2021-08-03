@@ -21,7 +21,7 @@ parameters:
 executors:
   golang:
     docker:
-      - image: cleversonsoares/ze-delivery:latest
+      - image: cleversonsoares/ze-delivery
         auth:
           username: cleversonsoares
           password: $DOCKERHUB_PASSWORD
@@ -35,9 +35,27 @@ jobs:
     executor: golang
     steps:
       - checkout
+      - restore_cache:
+          keys:
+            - go-mod-v1-{{ checksum "go.sum" }}
+
+      #- run:
+      #    name: Building pkg-build
+      #    command: make
+      #    working_directory: ./pkg-build
+
+      #- run:
+      #    name: Copying pkg-build
+      #    command: mv ./pkg-build/pkg-build ./.circleci/
+
       - run:
           name: Trigger workflows
-          command: chmod +x .circleci/circle_trigger.sh && .circleci/circle_trigger.sh
+          command: chmod u+x .circleci/circle_trigger.sh
+
+      - save_cache:
+          paths:
+            - "/go/pkg/mod"
+          key: go-mod-v1-{{ checksum "go.sum" }}
 
   # Updates Amazon AWS ECS Task Definition
 
@@ -151,7 +169,7 @@ workflows:
       - trigger-workflows
 
   ##########################################
-  ##### 💬 Partner Workflow ################
+  ##### 💬 Partner Workflow#####
   ##########################################
 
   partner:
@@ -184,6 +202,6 @@ workflows:
           family: partner-service
           package_directory: ./partner
           task_definition_file: task-definition.json
-          cluster_name: "ze-delivery-microservices"
+          cluster_name: "ze-delivery-microservices-main"
           requires:
             - aws-ecr/build-and-push-image

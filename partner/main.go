@@ -10,6 +10,6 @@ import (
 func main() {
 	common.InitLocalEnvConfig()
 	gen.InitializeApp().Run()
-	log.Print("partner service terminated")
+	log.Print("partner service terminatedd")
 }
 
