@@ -20,7 +20,7 @@ RUN adduser -S -D -H -h /app appuser
 # Change to a non-root user
 USER appuser
 # Add artifact from builder stage
-COPY --from=builder /build/main /app/
+COPY --from=builder /build/partner-service /app/
 # Expose port to host
 EXPOSE 8080
 # Run software with any arguments
