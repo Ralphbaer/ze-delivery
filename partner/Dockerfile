@@ -6,10 +6,10 @@ COPY go.mod ./
 COPY go.sum ./
 RUN go mod download
 
-COPY *.go ./
+COPY ./partner/*.go ./
 
-RUN go build -o /ze-delivery/partner
+RUN go build -o /ze-delivery
 
 EXPOSE 8080
 
-CMD [ "/ze-delivery/partner" ]
+CMD [ "./partner" ]
