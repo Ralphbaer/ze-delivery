@@ -8,8 +8,8 @@ RUN go mod download
 
 COPY *.go ./
 
-RUN go build -o /ze-delivery
+RUN go build -o /ze-delivery/partner
 
 EXPOSE 8080
 
-CMD [ "/ze-delivery" ]
+CMD [ "/ze-delivery/partner" ]
