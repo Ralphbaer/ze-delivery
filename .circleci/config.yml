@@ -9,11 +9,6 @@ orbs:
 
 jobs:
   build_package:
-    docker:
-      - image: "circleci/golang:1.11"
-    steps:
-      - checkout
-
     parameters:
       package_name:
         type: string
@@ -22,8 +17,13 @@ jobs:
       package_type:
         type: string
         default: service
-    package_directory:
-      type: string
+      package_directory:
+        type: string
+
+    docker:
+      - image: "circleci/golang:1.11"
+    steps:
+      - checkout
 
 workflows:
   # Log into AWS, build and push image to Amazon ECR
