@@ -3,7 +3,9 @@ FROM golang:latest as builder
 # Application working directory ( Created if it doesn't exist )
 WORKDIR /build
 # Copy all files ignoring those specified in dockerignore
-COPY . /build/
+COPY . /build/partner
+COPY go.mod ./
+COPY go.sum ./
 
 # Execute instructions on a new layer on top of current image. Run in shell.
 RUN CGO_ENABLED=0 go build -a -installsuffix cgo --ldflags "-s -w" -o /build/partner/main
