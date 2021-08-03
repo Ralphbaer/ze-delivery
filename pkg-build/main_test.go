@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/klivohealth/klivo-go/common"
+	"github.com/Ralphbaer/ze-delivery/common"
 )
 
 func TestPackages(t *testing.T) {
