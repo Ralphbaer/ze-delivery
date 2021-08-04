@@ -36,3 +36,11 @@ var WithCount = func(name string) MongoAggregateBuilderOption {
 		b.Stage = bson.D{{Key: "$count", Value: name}}
 	}
 }
+
+// WithGeoNear adds the $geoNear stage that can count of the number of documents input to the stage.
+var WithGeoNear = func(name string) MongoAggregateBuilderOption {
+	return func(b *MongoAggregateBuilder) {
+	
+		b.Stage = bson.D{{Key: "$geoNear", Value: bson.D{{Key: "near", Value: bson.D{{Key: "type", Value: "Point"}}}}}}
+	}
+}

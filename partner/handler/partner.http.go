@@ -6,8 +6,10 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/gorilla/schema"
 
 	commonHTTP "github.com/Ralphbaer/ze-delivery/common/net/http"
+	repo "github.com/Ralphbaer/ze-delivery/partner/repository"
 	uc "github.com/Ralphbaer/ze-delivery/partner/usecase"
 )
 
@@ -93,8 +95,16 @@ func (handler *PartnerHandler) GetByID() http.Handler {
 //         message: message
 func (handler *PartnerHandler) GetNearestPartner() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		partnerID := mux.Vars(r)["id"]
-		partner, err := handler.UseCase.GetNearestPartner(r.Context(), partnerID)
+		schemaDecoder := schema.NewDecoder()
+
+		var q repo.PartnerQuery
+		if err := schemaDecoder.Decode(&q, r.URL.Query()); err != nil {
+			log.Println(err.Error())
+			commonHTTP.BadRequest(w, err.Error())
+			return
+		}
+
+		partner, err := handler.UseCase.GetNearestPartner(r.Context(), &q)
 		if err != nil {
 			log.Println(err.Error())
 			commonHTTP.WithError(w, err)

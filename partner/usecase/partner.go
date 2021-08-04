@@ -20,34 +20,19 @@ func (uc *PartnerUseCase) Get(ctx context.Context, ID string) (*e.Partner, error
 }
 
 // GetNearestPartner returns the nearest partner given coordinates longitude and latitude
-func (uc *PartnerUseCase) GetNearestPartner(ctx context.Context, ID string) (*e.Partner, error) {
-	/*p := NewPoint(49.014, 8.4043)
-    geocoder := new(geo.Point)
-    data, err := geocoder.Request(fmt.Sprintf("latlng=%f,%f", p.Lat(), p.Lng()))
-    if err != nil {
-        log.Println(err)
-    }
-    var res googleGeocodeResponse
-    if err := json.Unmarshal(data, &res); err != nil {
-        log.Println(err)
-    }
-    var city string
-    if len(res.Results) > 0 {
-        r := res.Results[0]
-    outer:
-        for _, comp := range r.AddressComponents {
-            // See https://developers.google.com/maps/documentation/geocoding/#Types
-            // for address types
-            for _, compType := range comp.Types {
-                if compType == "locality" {
-                    city = comp.LongName
-                    break outer
-                }
-            }
-        }
-    }
-    fmt.Printf("City: %s\n", city)*/
-	return nil, nil
+func (uc *PartnerUseCase) GetNearestPartner(ctx context.Context, q *r.PartnerQuery) (*e.Partner, error) {
+	result, err := uc.PartnerRepo.FindNearest(ctx, q.Longitude, q.Latitude)
+	if err != nil {
+		return nil, err
+	}
+	if result == nil {
+		return nil, common.EntityNotFoundError{
+			Message: "no nearest partner",
+			Err: err,
+		}
+	}
+
+	return result, nil
 }
 
 

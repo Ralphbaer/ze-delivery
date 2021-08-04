@@ -6,8 +6,10 @@ import (
 	"github.com/Ralphbaer/ze-delivery/common"
 	"github.com/Ralphbaer/ze-delivery/common/zmongo"
 	e "github.com/Ralphbaer/ze-delivery/partner/entity"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // PartnerMongoRepositoryOption is the options to PartnerMongoRepository
@@ -81,35 +83,60 @@ func (r *PartnerMongoRepository) Save(ctx context.Context, p *e.Partner) (*strin
 }
 
 
-/*
-// FindNearest returns a specific Partner given an id
+
+// FindNearest returns the nearest Partner given a long & lat
 func (r PartnerMongoRepository) FindNearest(ctx context.Context, long, lat float64) (*e.Partner, error) {
 	coll, err := r.connection.ReadyCollection(r.opts.DatabaseName, r.opts.CollectionName)
 	if err != nil {
 		return nil, err
 	}
 
-	doc := &PartnerMongoModel{}
 
-	b := zmongo.NewMongoQueryBuilder(
-		zmongo.WithFilter("location", ),
-	)
-	
-	if _, err := zmongo.FindOne(ctx, bson.M{
-		"location": bson.M{
-			"$near": bson.M{
-				"$geometry": bson.M{
+	var docs []*PartnerMongoModel
+	var docResult *e.Partner
+
+	pipeline := []bson.M{
+		{
+			"$geoNear": bson.M{
+				"includeLocs":   "address",
+				"distanceField": "distance",
+				"spherical":     true,
+				"near": bson.M{
 					"type":        "Point",
 					"coordinates": []float64{long, lat},
 				},
-				"$maxDistance": 50,
+				"query": bson.M{ 
+					"coverageArea": bson.M{ 
+						"$geoIntersects": bson.M{ 
+							"$geometry": bson.M{ 
+								"type": "Point", 
+								"coordinates": []float64{long, lat},
+								}, 
+								},
+								},
+							},
+
 			},
 		},
-	}, nil); err != nil {
+		{
+			"$limit": 1,
+		},
+	}
+
+	cursor, err := coll.Aggregate(ctx, pipeline, options.Aggregate())
+	if err != nil {
 		return nil, err
 	}
 
-	event := doc.ToEntity()
+	defer cursor.Close(ctx)
 
-	return event, nil
-}*/
+	if err = cursor.All(ctx, &docs); err != nil {
+		return nil, err
+	}
+
+	if len(docs) != 0 {
+		docResult = docs[0].ToEntity()
+	}
+
+	return docResult, nil
+}
