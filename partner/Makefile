@@ -54,8 +54,8 @@ deploy-image:
 	docker push 742261599957.dkr.ecr.us-east-2.amazonaws.com/ze-delivery/$(service-name):latest
 
 localenv:
-	rm -rf .localenv/.data && \
-	sudo docker-compose -f .localenv/docker-compose.yml up --force-recreate
+	sudo rm -rf .localenv/.data && \
+	docker-compose -f .localenv/docker-compose.yml up --force-recreate
 
 doc:
 	swagger generate spec -o ./gen/swagger.yaml --scan-models \
