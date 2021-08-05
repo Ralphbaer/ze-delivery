@@ -19,7 +19,7 @@ type PartnerHandler struct {
 }
 
 // GetByID returns a partner by its ID
-// swagger:operation GET /partner/partners/{id} partners GetByID
+// swagger:operation GET /partners/{id} partners GetByID
 // Returns an partner by its id
 // ---
 // parameters:
@@ -33,7 +33,7 @@ type PartnerHandler struct {
 //   '200':
 //     description: Success Operation
 //     schema:
-//         "$ref": "#/definitions/partner"
+//         "$ref": "#/definitions/Partner"
 //   '404':
 //     description: Not Found - Resource does not exists
 //     schema:
@@ -65,7 +65,7 @@ func (handler *PartnerHandler) GetByID() http.Handler {
 }
 
 // GetNearestPartner returns the nearest partner given coordinates longitude and latitude
-// swagger:operation GET /partner/partners/nearest partners GetNearestPartner
+// swagger:operation GET /partners/nearest partners GetNearestPartner
 // Returns a partner given coordinates longitude and latitude
 // ---
 // parameters:
@@ -84,7 +84,7 @@ func (handler *PartnerHandler) GetByID() http.Handler {
 //   '200':
 //     description: Success Operation
 //     schema:
-//         "$ref": "#/definitions/partner"
+//         "$ref": "#/definitions/Partner"
 //   '404':
 //     description: Not Found - Resource does not exists
 //     schema:
@@ -119,7 +119,7 @@ func (handler *PartnerHandler) GetNearestPartner() http.Handler {
 
 
 // Create creates a new Partner in the repository
-// swagger:operation POST /partner/partners partners Create
+// swagger:operation POST /partners partners Create
 // Register a new Partner into database
 // ---
 // parameters:

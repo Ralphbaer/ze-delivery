@@ -27,14 +27,13 @@ func (uc *PartnerUseCase) GetNearestPartner(ctx context.Context, q *r.PartnerQue
 	}
 	if result == nil {
 		return nil, common.EntityNotFoundError{
-			Message: "no nearest partner",
+			Message: ErrNoNearestPartner.Error(),
 			Err: err,
 		}
 	}
 
 	return result, nil
 }
-
 
 // Create creates a new Partner
 func (uc *PartnerUseCase) Create(ctx context.Context, cpi *CreatePartnerInput) (*e.Partner, error) {
@@ -58,7 +57,7 @@ func (uc *PartnerUseCase) Create(ctx context.Context, cpi *CreatePartnerInput) (
     if err != nil {
         if err == common.ErrMongoDuplicatedDocument {
 			return nil, common.EntityConflictError{
-                Message: "partner document already taken",
+                Message: ErrPartnerDocumentConflict.Error(),
                 Err: err,
             }
 		}

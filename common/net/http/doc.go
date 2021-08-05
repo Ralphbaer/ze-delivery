@@ -23,13 +23,13 @@ func DocAPI(specURL, serviceName, title string, r *mux.Router) {
 
 	r.Handle(defaultSpecURL, File("./gen/swagger.yaml"))
 
-	opts := middleware.RedocOpts{
+	opts := middleware.RapiDocOpts{
 		Path:    docURL,
 		SpecURL: specURL,
 		Title:   title,
 	}
 
-	docs := middleware.Redoc(opts, nil)
+	docs := middleware.RapiDoc(opts, nil)
 
 	r.Handle(fmt.Sprintf("/%s/docs", serviceName), docs)
 }

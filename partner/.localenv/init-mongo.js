@@ -1,6 +1,7 @@
 db.createCollection('partners')
 
 db.partners.createIndex({ document: 1 }, { unique: true })
+db.partners.createIndex({ coverageArea: 'address' })
 
 db.partners.insertMany([
 	{

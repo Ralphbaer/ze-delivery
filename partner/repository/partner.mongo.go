@@ -35,8 +35,8 @@ func NewPartnerMongoRepository(c *common.MongoConnection) *PartnerMongoRepositor
 	}
 }
 
-// Find returns a specific Partner given an id
-func (r PartnerMongoRepository) Find(ctx context.Context, eventID string) (*e.Partner, error) {
+// FindByDocument returns a specific Partner given a document value
+func (r PartnerMongoRepository) FindByDocument(ctx context.Context, document string) (*e.Partner, error) {
 	coll, err := r.connection.ReadyCollection(r.opts.DatabaseName, r.opts.CollectionName)
 	if err != nil {
 		return nil, err
@@ -44,7 +44,29 @@ func (r PartnerMongoRepository) Find(ctx context.Context, eventID string) (*e.Pa
 
 	doc := &PartnerMongoModel{}
 	b := zmongo.NewMongoQueryBuilder(
-		zmongo.WithObjectID(eventID),
+		zmongo.WithFilter("document", document),
+	)
+
+	if _, err := zmongo.FindOne(ctx, coll, b.Filter, doc); err != nil {
+		return nil, err
+	}
+
+	event := doc.ToEntity()
+
+	return event, nil
+}
+
+
+// Find returns a specific Partner given an id
+func (r PartnerMongoRepository) Find(ctx context.Context, ID string) (*e.Partner, error) {
+	coll, err := r.connection.ReadyCollection(r.opts.DatabaseName, r.opts.CollectionName)
+	if err != nil {
+		return nil, err
+	}
+
+	doc := &PartnerMongoModel{}
+	b := zmongo.NewMongoQueryBuilder(
+		zmongo.WithObjectID(ID),
 	)
 
 	if _, err := zmongo.FindOne(ctx, coll, b.Filter, doc); err != nil {
@@ -58,14 +80,15 @@ func (r PartnerMongoRepository) Find(ctx context.Context, eventID string) (*e.Pa
 
 // Save stores the given entity.Event into Mongo
 func (r *PartnerMongoRepository) Save(ctx context.Context, p *e.Partner) (*string, error) {
-
 	coll, err := r.connection.ReadyCollection(r.opts.DatabaseName, r.opts.CollectionName)
 	if err != nil {
 		return nil, err
 	}
 
 	doc := &PartnerMongoModel{}
-	doc.FromEntity(p)
+	if err := doc.FromEntity(p); err != nil {
+		return nil, err
+	}
 
 	res, err := coll.InsertOne(context.TODO(), doc)
 	if err != nil {

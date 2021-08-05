@@ -1,4 +1,4 @@
-basePath: /v1
+basePath: /partner
 consumes:
 - application/json
 definitions:
@@ -35,7 +35,7 @@ definitions:
         type: string
         x-go-name: Type
     type: object
-    x-go-package: github.com/Ralphbaer/ze-delivery/partner/entity
+    x-go-package: github.com/Ralphbaer/ze-delivery/partner/usecase
   CreatePartnerInput:
     description: We can understand it as a Command. It is used in CREATE operations.
     properties:
@@ -114,13 +114,12 @@ definitions:
         x-go-name: Message
     type: object
     x-go-package: github.com/Ralphbaer/ze-delivery/common/net/http
-host: api.ze-delivery.com
 info:
-  description: This guide describes partners, events, and their relationship to each other.
-  title: partner API.
+  description: This guide describes all Zé Delivery Partner API and usecase.
+  title: Partner API.
   version: 0.0.1
 paths:
-  /partner/partners:
+  /partners:
     post:
       description: Register a new Partner into database
       operationId: Create
@@ -157,7 +156,7 @@ paths:
       - Definitions: []
       tags:
       - partners
-  /partner/partners/{id}:
+  /partners/{id}:
     get:
       description: Returns an partner by its id
       operationId: GetByID
@@ -171,7 +170,7 @@ paths:
         "200":
           description: Success Operation
           schema:
-            $ref: '#/definitions/partner'
+            $ref: '#/definitions/Partner'
         "404":
           description: Not Found - Resource does not exists
           examples:
@@ -182,7 +181,7 @@ paths:
             $ref: '#/definitions/ResponseError'
       tags:
       - partners
-  /partner/partners/nearest:
+  /partners/nearest:
     get:
       description: Returns a partner given coordinates longitude and latitude
       operationId: GetNearestPartner
@@ -201,7 +200,7 @@ paths:
         "200":
           description: Success Operation
           schema:
-            $ref: '#/definitions/partner'
+            $ref: '#/definitions/Partner'
         "404":
           description: Not Found - Resource does not exists
           examples:

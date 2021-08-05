@@ -1,10 +1,9 @@
-// Package app partner API.
+// Package app Partner API.
 //
-// This guide describes partners, events, and their relationship to each other.
+// This guide describes all Zé Delivery Partner API and usecase.
 //
 //     Schemes: http, https
-//     Host: api.ze-delivery.com
-//     BasePath: /v1
+//     BasePath: /partner
 //     Version: 0.0.1
 //
 //     Consumes:
@@ -37,7 +36,6 @@ func NewRouter(p *handler.PartnerHandler) *mux.Router {
 	r := mux.NewRouter()
 	config := NewConfig()
 
-	lib.AllowFullOptionsWithCORS(r)
 	r.Use(lib.WithCorrelationID)
 
 	r.Handle("/partner/partners/nearest", p.GetNearestPartner()).Methods("GET")

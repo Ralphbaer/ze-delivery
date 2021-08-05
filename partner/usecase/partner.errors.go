@@ -2,11 +2,8 @@ package usecase
 
 import "errors"
 
-// ErrReasonIsEmpty is throwed when startDate or endDate (or both) are informed and reason not
-var ErrReasonIsEmpty = errors.New("reason is empty")
+// ErrPartnerDocumentConflict is throwed when a document (partner unique field) already exists in the repository
+var ErrPartnerDocumentConflict = errors.New("partner document already taken")
 
-// ErrOutOfSchedule is throwed when startDate or endDate (or both) are out of our Schedule (08AM - 08PM)
-var ErrOutOfSchedule = errors.New("startDate and/or EndDate is/are out out of our Schedule (08AM - 08PM)")
-
-// ErrInvalidReasonID is throwed the ReasonId informed is not valid
-var ErrInvalidReasonID = errors.New("reasonId is not valid")
+// ErrNoNearestPartner is throwed when a document (partner unique field) already exists in the repository
+var ErrNoNearestPartner = errors.New("no nearest partner")
