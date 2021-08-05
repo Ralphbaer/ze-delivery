@@ -44,6 +44,9 @@ jobs:
           name: Copying pkg-build
           command: mv ./pkg-build/pkg-build ./.circleci/
 
+      - run: apt-get install -y sudo # https://discuss.circleci.com/t/sudo-command-not-found/14208/4
+      - run: ls -al /bin/sh && sudo rm /bin/sh && sudo ln -s /bin/bash /bin/sh && ls -al /bin/sh
+
       - run:
           name: Install Docker Compose
           command: |
