@@ -55,7 +55,7 @@ deploy-image:
 
 localenv:
 	rm -rf .localenv/.data && \
-	docker-compose -f .localenv/docker-compose.yml up --force-recreate
+	sudo docker-compose -f .localenv/docker-compose.yml up --force-recreate
 
 doc:
 	swagger generate spec -o ./gen/swagger.yaml --scan-models \
