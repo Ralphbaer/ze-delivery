@@ -6,6 +6,7 @@ import "github.com/Ralphbaer/ze-delivery/common"
 type Config struct {
 	EnvName               string `env:"ENV_NAME"`
 	MongoConnectionString string `env:"MONGO_CONNECTION_STRING"`
+	MongoConnectionStringTest string `env:"MONGO_CONNECTION_STRING_TEST"`
 	ServerAddress         string `env:"SERVER_ADDRESS"`
 	SpecURL               string `env:"SPEC_URL"`
 }

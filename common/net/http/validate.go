@@ -37,17 +37,6 @@ func ValidateStruct(s interface{}) error {
 	return nil
 }
 
-// ValidateValue validates a value based on its tag
-func ValidateValue(s interface{}, tag string) *ValidationError {
-	v, trans := newValidator()
-	err := v.Var(s, tag)
-	if err != nil {
-		errPtr := malformedRequestErr(err.(validator.ValidationErrors), trans)
-		return &errPtr
-	}
-	return nil
-}
-
 func malformedRequestErr(err validator.ValidationErrors, trans ut.Translator) ValidationError {
 	return ValidationError{
 		Code:    400,

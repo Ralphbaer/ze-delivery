@@ -12,6 +12,11 @@ import (
 )
 
 func TestPartnerUseCase_GetNearestPartner(t *testing.T) {
+	// Check if short flag is present, if so, skip test.
+	if !testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+	
 	partnerRepo := r.NewPartnerMongoRepository(&common.MongoConnection{
 		ConnectionString: "mongodb://localhost:27017/partner",
 		Verbose: true,

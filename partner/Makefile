@@ -54,7 +54,7 @@ deploy-image:
 	docker push 742261599957.dkr.ecr.us-east-2.amazonaws.com/ze-delivery/$(service-name):latest
 
 localenv:
-	sudo rm -rf .localenv/.data && \
+	rm -rf .localenv/.data && \
 	docker-compose -f .localenv/docker-compose.yml up --force-recreate
 
 doc:
