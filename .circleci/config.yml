@@ -113,7 +113,9 @@ jobs:
 
       - run:
           name: Building
-          command: make build
+          command: |
+            make localenv
+            make build
           working_directory: << parameters.package_directory >>
 
       - run:
