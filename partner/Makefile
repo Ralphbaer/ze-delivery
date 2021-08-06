@@ -56,6 +56,10 @@ deploy-image:
 	docker tag ze-delivery/$(service-name):v1 742261599957.dkr.ecr.us-east-2.amazonaws.com/ze-delivery/$(service-name)
 	docker push 742261599957.dkr.ecr.us-east-2.amazonaws.com/ze-delivery/$(service-name):latest
 
+localenv-withData:
+	rm -rf .localenv/withData/.data && \
+	docker-compose -f .localenv/withData/docker-compose.yml up --force-recreate
+	
 localenv:
 	rm -rf .localenv/.data && \
 	docker-compose -f .localenv/docker-compose.yml up --force-recreate

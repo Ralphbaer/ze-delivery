@@ -1,0 +1,12 @@
+version: "3"
+
+services:
+    partner-db:
+        image: mongo
+        ports:
+            - "27017:27017"
+        volumes:
+            - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+            - ./.data:/data/db
+        environment:
+            - MONGO_INITDB_DATABASE=partner
