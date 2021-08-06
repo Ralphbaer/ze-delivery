@@ -114,9 +114,3 @@ func SetConfigFromEnvVars(s interface{}) error {
 	}
 	return nil
 }
-
-// EnsureConfigFromEnvVars ensures that an interface will be setted using SetConfigFromEnvVars anyway
-func EnsureConfigFromEnvVars(s interface{}) interface{} {
-	SetConfigFromEnvVars(s)
-	return s
-}

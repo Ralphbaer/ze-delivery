@@ -6,8 +6,10 @@ import (
 	"github.com/Ralphbaer/ze-delivery/common"
 	"github.com/Ralphbaer/ze-delivery/common/zmongo"
 	e "github.com/Ralphbaer/ze-delivery/partner/entity"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // PartnerMongoRepositoryOption is the options to PartnerMongoRepository
@@ -33,8 +35,8 @@ func NewPartnerMongoRepository(c *common.MongoConnection) *PartnerMongoRepositor
 	}
 }
 
-// Find returns a specific Partner given an id
-func (r PartnerMongoRepository) Find(ctx context.Context, eventID string) (*e.Partner, error) {
+// FindByDocument returns a specific Partner given a document value
+func (r PartnerMongoRepository) FindByDocument(ctx context.Context, document string) (*e.Partner, error) {
 	coll, err := r.connection.ReadyCollection(r.opts.DatabaseName, r.opts.CollectionName)
 	if err != nil {
 		return nil, err
@@ -42,28 +44,50 @@ func (r PartnerMongoRepository) Find(ctx context.Context, eventID string) (*e.Pa
 
 	doc := &PartnerMongoModel{}
 	b := zmongo.NewMongoQueryBuilder(
-		zmongo.WithObjectID(eventID),
+		zmongo.WithFilter("document", document),
 	)
 
 	if _, err := zmongo.FindOne(ctx, coll, b.Filter, doc); err != nil {
 		return nil, err
 	}
 
-	event := doc.ToEntity()
+	partner := doc.ToEntity()
 
-	return event, nil
+	return partner, nil
 }
 
-// Save stores the given entity.Event into Mongo
-func (r *PartnerMongoRepository) Save(ctx context.Context, p *e.Partner) (*string, error) {
-
+// Find returns a specific Partner given an id
+func (r PartnerMongoRepository) Find(ctx context.Context, ID string) (*e.Partner, error) {
 	coll, err := r.connection.ReadyCollection(r.opts.DatabaseName, r.opts.CollectionName)
 	if err != nil {
 		return nil, err
 	}
 
 	doc := &PartnerMongoModel{}
-	doc.FromEntity(p)
+	b := zmongo.NewMongoQueryBuilder(
+		zmongo.WithObjectID(ID),
+	)
+
+	if _, err := zmongo.FindOne(ctx, coll, b.Filter, doc); err != nil {
+		return nil, err
+	}
+
+	partner := doc.ToEntity()
+
+	return partner, nil
+}
+
+// Save stores the given entity.Partner into Mongo
+func (r *PartnerMongoRepository) Save(ctx context.Context, p *e.Partner) (*string, error) {
+	coll, err := r.connection.ReadyCollection(r.opts.DatabaseName, r.opts.CollectionName)
+	if err != nil {
+		return nil, err
+	}
+
+	doc := &PartnerMongoModel{}
+	if err := doc.FromEntity(p); err != nil {
+		return nil, err
+	}
 
 	res, err := coll.InsertOne(context.TODO(), doc)
 	if err != nil {
@@ -81,35 +105,60 @@ func (r *PartnerMongoRepository) Save(ctx context.Context, p *e.Partner) (*strin
 }
 
 
-/*
-// FindNearest returns a specific Partner given an id
+
+// FindNearest returns the nearest Partner given a long & lat
 func (r PartnerMongoRepository) FindNearest(ctx context.Context, long, lat float64) (*e.Partner, error) {
 	coll, err := r.connection.ReadyCollection(r.opts.DatabaseName, r.opts.CollectionName)
 	if err != nil {
 		return nil, err
 	}
 
-	doc := &PartnerMongoModel{}
 
-	b := zmongo.NewMongoQueryBuilder(
-		zmongo.WithFilter("location", ),
-	)
-	
-	if _, err := zmongo.FindOne(ctx, bson.M{
-		"location": bson.M{
-			"$near": bson.M{
-				"$geometry": bson.M{
+	var docs []*PartnerMongoModel
+	var docResult *e.Partner
+
+	pipeline := []bson.M{
+		{
+			"$geoNear": bson.M{
+				"includeLocs":   "address",
+				"distanceField": "distance",
+				"spherical":     true,
+				"near": bson.M{
 					"type":        "Point",
 					"coordinates": []float64{long, lat},
 				},
-				"$maxDistance": 50,
+				"query": bson.M{ 
+					"coverageArea": bson.M{ 
+						"$geoIntersects": bson.M{ 
+							"$geometry": bson.M{ 
+								"type": "Point", 
+								"coordinates": []float64{long, lat},
+								}, 
+								},
+								},
+							},
+
 			},
 		},
-	}, nil); err != nil {
+		{
+			"$limit": 1,
+		},
+	}
+
+	cursor, err := coll.Aggregate(ctx, pipeline, options.Aggregate())
+	if err != nil {
 		return nil, err
 	}
 
-	event := doc.ToEntity()
+	defer cursor.Close(ctx)
 
-	return event, nil
-}*/
+	if err = cursor.All(ctx, &docs); err != nil {
+		return nil, err
+	}
+
+	if len(docs) != 0 {
+		docResult = docs[0].ToEntity()
+	}
+
+	return docResult, nil
+}

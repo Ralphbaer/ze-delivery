@@ -11,8 +11,8 @@ import (
 
 // PartnerQuery represents the query to find partners
 type PartnerQuery struct {
-	Longitude   float64       `schema:"long"`
-	Latitude    float64       `schema:"lat"`
+	Longitude   float64       `schema:"long,required"`
+	Latitude    float64       `schema:"lat,required"`
 }
 
 // PartnerMongoModel is the model of entity.Partner

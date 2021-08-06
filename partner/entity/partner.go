@@ -1,6 +1,6 @@
 package entity
 
-// Partner represents a collection of identification data of a Zé Delivery Partner,
+// Partner represents a collection of identification data about a Zé Delivery Partner,
 // including its coordinates represented by the coverageArea and address fields.
 // swagger:model Partner
 type Partner struct {

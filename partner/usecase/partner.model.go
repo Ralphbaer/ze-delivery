@@ -12,12 +12,14 @@ type CreatePartnerInput struct {
 }
 
 // CoverageArea follows the GeoJSON MultiPolygon format (https://en.wikipedia.org/wiki/GeoJSON)
+// swagger:model CoverageArea
 type CoverageArea struct {
 	Type        string      `json:"type" validate:"oneof=Point MultiPolygon"`
 	Coordinates [][][][]float64 `json:"coordinates"`
 }
 
 // Address follows the GeoJSON Point format (https://en.wikipedia.org/wiki/GeoJSON)
+// swagger:model Address
 type Address struct {
 	Type        string     `json:"type" validate:"oneof=Point MultiPolygon"`
 	Coordinates []float64 `json:"coordinates"`

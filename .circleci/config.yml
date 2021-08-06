@@ -113,13 +113,14 @@ jobs:
 
       - run:
           name: Building
-          command: make build
+          command: |
+            make build
           working_directory: << parameters.package_directory >>
 
       - run:
           name: Running tests
           command: |
-            make test
+            make unit-test
           working_directory: << parameters.package_directory >>
 
       - run:

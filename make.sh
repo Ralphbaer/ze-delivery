@@ -100,26 +100,6 @@ checkEnvs() {
   fi
 }
 
-checkLogs() {
-  title1 "STARTING LOGS ANALYZER"
-  allFiles=$(find . -type f -path '*usecase*/*' -name '*.go')
-  err=0
-  while IFS= read -r path; do
-     file=$( awk 'f && f-- {print} /err != nil/ { f = 1 }' $path | column)
-     if [[ ! -z "$file" && $path != *"_test"* && $path != *"./pkg-build"* && $path != *"./common"* ]]; then
-          while IFS= read -r line; do
-              if [[ "$line" != *"logger.Error"* && "$line" != *"log.Error"* ]]; then
-              err=1
-              echo $path
-              fi
-          done <<< "$file"
-     fi
-  done <<< "$allFiles"
-  if [ $err -ne 0 ]; then
-      echo -e "\n${yellow}You need to log all errors inside usecases after they are handled. ${bold}[WARNING]${normal}\n"
-  fi
-}
-
 echo -e "\n\n"
 title1 "STARTING PRE-COMMIT SCRIPT"
 
@@ -137,5 +117,4 @@ fi
 if [ "$1" != "clean" -a "$1" != "lint" -a "$1" != "checkEnvs" -a "$1" != "doc" ]; then
   checkEnvs
   lint
-  checkLogs
 fi

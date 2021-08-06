@@ -12,45 +12,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-// FindAll is a utility function which finds all records in given collection using mongo query builder
-// The given slice must be a pre created slice of any type. Eg. make([]*struct,0)
-func FindAll(ctx context.Context, coll *mongo.Collection, b *MongoQueryBuilder, slice interface{}) error {
-
-	if coll == nil {
-		return errors.New("the given collection (coll) is nil")
-	}
-
-	cursor, err := coll.Find(context.TODO(), b.Filter, b.Opts)
-
-	if err != nil {
-		return err
-	}
-
-	defer cursor.Close(context.TODO())
-
-	if err := cursor.All(context.TODO(), slice); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// Count is a utility function which returns the number of documents in the collection.
-//  For a fast count of the documents in the collection, see the EstimatedDocumentCount method.
-func Count(ctx context.Context, coll *mongo.Collection, b *MongoQueryBuilder) (int64, error) {
-	if coll == nil {
-		return 0, errors.New("the given collection (coll) is nil")
-	}
-
-	result, err := coll.CountDocuments(context.TODO(), b.Filter, nil)
-	if err != nil {
-		return 0, err
-	}
-
-	return result, nil
-}
-
-
 // FindOne finds a document in MongoDB using a filter
 func FindOne(ctx context.Context, coll *mongo.Collection, filter interface{}, s interface{}) (*mongo.SingleResult, error) {
 	sr := coll.FindOne(context.TODO(), filter)
@@ -95,28 +56,6 @@ func ObjectIDFromString(HexID string) (primitive.ObjectID, error) {
 		return primitive.NilObjectID, err
 	}
 	return objID, nil
-}
-
-// MustObjectIDFromString converts a HexID in string format to primitive.ObjectID anyway
-func MustObjectIDFromString(hexID string) primitive.ObjectID {
-	obj, err := ObjectIDFromString(hexID)
-	if err != nil {
-		return primitive.NilObjectID
-	}
-	return obj
-}
-
-// ObjectIDFromList converts a list of string in a list of primitive.ObjectID
-func ObjectIDFromList(HexIDs []string) ([]primitive.ObjectID, error) {
-	objIDs := make([]primitive.ObjectID, 0)
-	for _, id := range HexIDs {
-		i, err := ObjectIDFromString(id)
-		if err != nil {
-			return nil, err
-		}
-		objIDs = append(objIDs, i)
-	}
-	return objIDs, nil
 }
 
 func getTypeName(s interface{}) string {

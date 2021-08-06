@@ -73,36 +73,12 @@ func (d *decoderHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	d.handler(s).ServeHTTP(w, r.WithContext(ctx))
 }
 
-// WithDecode return a new instance of decoderHandler
-func WithDecode(c ConstructorFunc, h DecodeHandlerFunc) http.Handler {
-	return &decoderHandler{
-		handler:     h,
-		constructor: c,
-	}
-}
-
 // WithBody return a new instance of decoderHandler using a source for constructor.
 func WithBody(s interface{}, h DecodeHandlerFunc) http.Handler {
 	return &decoderHandler{
 		handler:      h,
 		structSource: s,
 	}
-}
-
-// SetBodyInContext appends the payload object to context with the "payload" key
-func SetBodyInContext(handler http.Handler) DecodeHandlerFunc {
-	return func(s interface{}) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			// TODO: Should remove lint problem from here
-			ctx := context.WithValue(r.Context(), PayloadContextValue("payload"), s)
-			handler.ServeHTTP(w, r.WithContext(ctx))
-		})
-	}
-}
-
-// GetPayloadFromContext gets the http payload from context
-func GetPayloadFromContext(ctx context.Context) interface{} {
-	return ctx.Value(PayloadContextValue("payload"))
 }
 
 func decodeJSON(r io.Reader, s interface{}) error {

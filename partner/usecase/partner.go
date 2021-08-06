@@ -16,43 +16,44 @@ type PartnerUseCase struct {
 
 // Get get a partner by its id
 func (uc *PartnerUseCase) Get(ctx context.Context, ID string) (*e.Partner, error) {
-	return uc.PartnerRepo.Find(ctx, ID)
+	log.Printf("PartnerUseCase.Get.ID %+v", ID)
+
+	partner, err := uc.PartnerRepo.Find(ctx, ID)
+	if err != nil {
+		return nil, err
+	}
+
+	log.Printf("PartnerUseCase.Get.Result %+v", partner)
+
+	return partner, nil
 }
 
 // GetNearestPartner returns the nearest partner given coordinates longitude and latitude
-func (uc *PartnerUseCase) GetNearestPartner(ctx context.Context, ID string) (*e.Partner, error) {
-	/*p := NewPoint(49.014, 8.4043)
-    geocoder := new(geo.Point)
-    data, err := geocoder.Request(fmt.Sprintf("latlng=%f,%f", p.Lat(), p.Lng()))
-    if err != nil {
-        log.Println(err)
-    }
-    var res googleGeocodeResponse
-    if err := json.Unmarshal(data, &res); err != nil {
-        log.Println(err)
-    }
-    var city string
-    if len(res.Results) > 0 {
-        r := res.Results[0]
-    outer:
-        for _, comp := range r.AddressComponents {
-            // See https://developers.google.com/maps/documentation/geocoding/#Types
-            // for address types
-            for _, compType := range comp.Types {
-                if compType == "locality" {
-                    city = comp.LongName
-                    break outer
-                }
-            }
-        }
-    }
-    fmt.Printf("City: %s\n", city)*/
-	return nil, nil
-}
+func (uc *PartnerUseCase) GetNearestPartner(ctx context.Context, q *r.PartnerQuery) (*e.Partner, error) {
+	log.Printf("PartnerUseCase.GetNearestPartner.Query %+v", q)
 
+	result, err := uc.PartnerRepo.FindNearest(ctx, q.Longitude, q.Latitude)
+	if err != nil {
+		log.Printf("PartnerUseCase.GetNearestPartner.FindNearest.Err %+v", err)
+		return nil, err
+	}
+	if result == nil {
+		log.Printf("PartnerUseCase.GetNearestPartner.FindNearest.Err %+v", ErrNoNearestPartner.Error())
+		return nil, common.EntityNotFoundError{
+			Message: ErrNoNearestPartner.Error(),
+			Err: err,
+		}
+	}
+
+	log.Printf("PartnerUseCase.GetNearestPartner.Result %+v", result)
+
+	return result, nil
+}
 
 // Create creates a new Partner
 func (uc *PartnerUseCase) Create(ctx context.Context, cpi *CreatePartnerInput) (*e.Partner, error) {
+	log.Printf("PartnerUseCase.Create.CreatePartnerInput %+v", cpi)
+
 	p := &e.Partner{
 		TradingName: cpi.TradingName,
 		OwnerName:       cpi.OwnerName,
@@ -67,18 +68,21 @@ func (uc *PartnerUseCase) Create(ctx context.Context, cpi *CreatePartnerInput) (
 		},
 	}
 
-	log.Printf("Creating event %+v", p)
+	log.Printf("PartnerUseCase.Create.PartnerEntity %+v", p)
 
 	id, err := uc.PartnerRepo.Save(ctx, p)
     if err != nil {
+		log.Printf("PartnerUseCase.Create.Err %+v", err)
         if err == common.ErrMongoDuplicatedDocument {
 			return nil, common.EntityConflictError{
-                Message: "partner document already taken",
+                Message: ErrPartnerDocumentConflict.Error(),
                 Err: err,
             }
 		}
         return nil, err
     }
+
+	log.Printf("PartnerUseCase.Create.Save.ID %+v", id)
 
     p.ID = *id
 
