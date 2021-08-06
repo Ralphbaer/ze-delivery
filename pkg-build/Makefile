@@ -5,7 +5,7 @@ default: build
 build:
 	go build -o $(binary-file)
 
-test:
+unit-test:
 	gotestsum --format short-verbose --junitfile junit-report.xml \
 	./... \
 	-coverprofile=coverage.out

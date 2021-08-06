@@ -24,7 +24,7 @@ run:
 	go run main.go
 	
 test:
-	make unit-test && make integration-test
+	make unit-test 
 
 unit-test:
 	mkdir -p $(artifacts-dir) && \
