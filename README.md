@@ -76,6 +76,8 @@ The service uses a Circle pipeline that is triggered when a code is pushed to ma
 The master has no PR approval criteria to facilitate the tests for the Ze Delivery team.
 For testing deploy purposes, you guys can change anything in the code or just change the signal.id file inside /partner, commit and push the change to master and wait the circle-ci to deploy the code. :)
 
+All provisioning on the AWS Cloud has already been done and its running.
 
+CircleCi is also working. Maybe you could create an account to access the project there through this link https://app.circleci.com/pipelines/github/Ralphbaer/ze-delivery?invite=true.
 
- 
+If you guys cant get the access, no problem, I can talk calmly and give all the details of both AWS provisioning (ec2, load balancer, system manager, secrets, etc.) and the circleCI pipeline.
