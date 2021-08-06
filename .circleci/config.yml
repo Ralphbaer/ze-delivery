@@ -188,7 +188,6 @@ workflows:
             branches:
               only:
                 - master
-                - ft/signal.id
 
       - update-aws-ecs-task:
           package_binary: partner-service
