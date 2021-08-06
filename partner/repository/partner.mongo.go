@@ -51,11 +51,10 @@ func (r PartnerMongoRepository) FindByDocument(ctx context.Context, document str
 		return nil, err
 	}
 
-	event := doc.ToEntity()
+	partner := doc.ToEntity()
 
-	return event, nil
+	return partner, nil
 }
-
 
 // Find returns a specific Partner given an id
 func (r PartnerMongoRepository) Find(ctx context.Context, ID string) (*e.Partner, error) {
@@ -73,12 +72,12 @@ func (r PartnerMongoRepository) Find(ctx context.Context, ID string) (*e.Partner
 		return nil, err
 	}
 
-	event := doc.ToEntity()
+	partner := doc.ToEntity()
 
-	return event, nil
+	return partner, nil
 }
 
-// Save stores the given entity.Event into Mongo
+// Save stores the given entity.Partner into Mongo
 func (r *PartnerMongoRepository) Save(ctx context.Context, p *e.Partner) (*string, error) {
 	coll, err := r.connection.ReadyCollection(r.opts.DatabaseName, r.opts.CollectionName)
 	if err != nil {

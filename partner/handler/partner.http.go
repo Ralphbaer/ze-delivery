@@ -20,7 +20,7 @@ type PartnerHandler struct {
 
 // GetByID returns a partner by its ID
 // swagger:operation GET /partners/{id} partners GetByID
-// Returns an partner by its id
+// Returns a partner by its id
 // ---
 // parameters:
 //  -  name: id
@@ -47,18 +47,13 @@ func (handler *PartnerHandler) GetByID() http.Handler {
 		partnerID := mux.Vars(r)["id"]
 		partner, err := handler.UseCase.Get(r.Context(), partnerID)
 		if partner == nil {
-			log.Printf(fmt.Sprintf("partner with ID %s not found.", partnerID))
 			commonHTTP.WithError(w, err)
 			return
 		}
-
 		if err != nil {
-			log.Println(err.Error())
 			commonHTTP.WithError(w, err)
 			return
 		}
-
-		log.Printf("Successfully found Partner: %+v", partner)
 
 		commonHTTP.OK(w, partner)
 	})
@@ -99,19 +94,15 @@ func (handler *PartnerHandler) GetNearestPartner() http.Handler {
 
 		var q repo.PartnerQuery
 		if err := schemaDecoder.Decode(&q, r.URL.Query()); err != nil {
-			log.Println(err.Error())
 			commonHTTP.BadRequest(w, err.Error())
 			return
 		}
 
 		partner, err := handler.UseCase.GetNearestPartner(r.Context(), &q)
 		if err != nil {
-			log.Println(err.Error())
 			commonHTTP.WithError(w, err)
 			return
 		}
-
-		log.Printf("Successfully found Partner: %+v", partner)
 
 		commonHTTP.OK(w, partner)
 	})

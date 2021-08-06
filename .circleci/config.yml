@@ -120,7 +120,7 @@ jobs:
       - run:
           name: Running tests
           command: |
-            make test
+            make unit-test
           working_directory: << parameters.package_directory >>
 
       - run:

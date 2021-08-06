@@ -8,7 +8,7 @@ import (
 
 //go:generate mockgen -destination=../gen/mock/repository_mock.go -package=mock . PartnerRepository
 
-// PartnerRepository manages event repository operations
+// PartnerRepository manages partner repository operations
 type PartnerRepository interface {
 	Find(ctx context.Context, ID string) (*e.Partner, error)
 	FindByDocument(ctx context.Context, document string) (*e.Partner, error)

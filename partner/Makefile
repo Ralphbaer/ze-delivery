@@ -23,14 +23,17 @@ build_linux: clean_build
 run:
 	go run main.go
 	
-run-air:
-	air main.go
-
 test:
+	make unit-test && make integration-test
+
+unit-test:
 	mkdir -p $(artifacts-dir) && \
 	gotestsum --format short-verbose --junitfile $(artifacts-dir)/junit-report.xml \
 	./... github.com/Ralphbaer/ze-delivery/common... \
 	-coverprofile=$(artifacts-dir)/coverage.out
+
+integration-test:
+	go test ./usecase -v -run TestPartnerUseCase_GetNearestPartner
 	
 cover-html:
 	go tool cover -html=$(artifacts-dir)/coverage.out -o $(artifacts-dir)/coverage.html
