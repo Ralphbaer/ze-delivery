@@ -1,4 +1,4 @@
 #!/bin/sh
 
 # v1
-# make unit-test
+# make test
