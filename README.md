@@ -27,12 +27,37 @@ This repo contains the source code of the Partner service.
 | [mongodb](https://www.mongodb.com/) | any stable version | If you want, you can use any mongoDB client to access the local database created | true
 
 # Usage
+Inside /partner, follow the steps.:
 
-### Start Local
-Inside /partner, you can run:
+
+### GitHub Env
 ```bash
-make run           # Start service on port 3000 without test data (empty database)
-make run-test      # Start service on port 3000 with test data (json](files/pdvs.json))
+make setup-env            
+```
+
+### Start Local Database
+- If you want to just test local without any preload data, just run:
+```bash
+make localenv            # Start local mongodb empty instance
+```
+
+- If you want to preload some test data local, run:
+```bash
+make localenv-withData            # Start local mongodb with preload data based on .localenv/withData/partners.json
+```
+
+PS.: After running any of the commands above, it will start an instance on your machine and the thread used in the command line of your choice will be blocked (cuz docker is running an instance). You need to open a second command line window to run the next command.
+
+I could have let the instance run in the background, but that way you can keep track of the logs in the command line.
+
+
+### Notes about the preload dataset
+Every time you create a new instance using mongo's preload data (make localenv-withData), all the 51 partners of partners.json are created again (ie. they are not being persisted with a preconditioned ID) and mongo will always generate new ids. If you want to get a generated ID, I recommend opening the local instance and choosing which ID you want to test (for Get(ID) cases).
+
+### Finally Start Service
+After starting the database locally, you are ready to execute the service. Run: 
+```bash
+make run            # Start local service on port :3000
 ```
 
 # Testing
